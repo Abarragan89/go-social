@@ -16,6 +16,7 @@ type Post struct {
 	Title     string    `json:"title"`
 	UserID    int64     `json:"user_id"`
 	Tags      []string  `json:"tags"`
+	Comments  string    `json:"comments"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt string    `json:"updated_at"`
 }
@@ -70,7 +71,7 @@ func (s *PostsStore) GetByID(ctx context.Context, postID int64) (*Post, error) {
 	)
 
 	if err != nil {
-		switch{
+		switch {
 		case errors.Is(err, sql.ErrNoRows):
 			return nil, ErrNotFound
 		default:
@@ -79,3 +80,5 @@ func (s *PostsStore) GetByID(ctx context.Context, postID int64) (*Post, error) {
 	}
 	return &post, nil
 }
+
+

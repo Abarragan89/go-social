@@ -15,6 +15,6 @@ migrate-up:
 migrate-down:
 	@migrate -path=$(MIGRATION_PATH) -database=$(DB_ADDR) down $(filter-out $@,$(MAKECMDGOALS))
 
-.PHONY:	migrate-drop:
+.PHONY:	migrate-drop
 migrate-drop:
 	@migrate -path=./cmd/migrate/migrations -database=$(DB_ADDR) drop -f

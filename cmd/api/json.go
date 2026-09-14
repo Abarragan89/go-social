@@ -24,7 +24,9 @@ func readJSON(w http.ResponseWriter, r *http.Request, data any) error {
 	r.Body = http.MaxBytesReader(w, r.Body, int64(maxBytes))
 
 	decoder := json.NewDecoder(r.Body)
-	// Disabled any unknown field
+	// Disabled any unknown field. the data
+	// is set to 'any' but will enfoce
+	// once the actual type is sent as arguement
 	decoder.DisallowUnknownFields()
 
 	return decoder.Decode(data)
