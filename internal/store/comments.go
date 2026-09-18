@@ -11,14 +11,14 @@ type Comment struct {
 	UserID    int64  `json:"user_id"`
 	PostID    int64  `json:"post_id"`
 	CreatedAt string `json:"created_at"`
-	User
+	User      User   `json:"user"`
 }
 
-type CommentsStore struct {
+type CommentStore struct {
 	db *sql.DB
 }
 
-func (s *CommentsStore) Create(ctx context.Context, comment *Comment) error {
+func (s *CommentStore) Create(ctx context.Context, comment *Comment) error {
 	query := `
 		INSERT INTO comments (content, user_id, post_id)
 		VALUES ( $1, $2, $3)
@@ -42,7 +42,7 @@ func (s *CommentsStore) Create(ctx context.Context, comment *Comment) error {
 	return nil
 }
 
-func (s *CommentsStore) GetByPostID(ctx context.Context, postId int64) (*[]Comment, error) {
+func (s *CommentStore) GetByPostID(ctx context.Context, postId int64) ([]Comment, error) {
 	query := `
 		SELECT c.id, c.content, c.created_at, u.username, c.user_id FROM comments c
 		JOIN users u On u.id = c.user_id
@@ -66,6 +66,7 @@ func (s *CommentsStore) GetByPostID(ctx context.Context, postId int64) (*[]Comme
 	// returns false when no more rows
 	for rows.Next() {
 		var c Comment
+		c.User = User{}
 		err := rows.Scan(
 			&c.ID,
 			&c.Content,
@@ -83,5 +84,5 @@ func (s *CommentsStore) GetByPostID(ctx context.Context, postId int64) (*[]Comme
 		return nil, err
 	}
 
-	return &comments, nil
+	return comments, nil
 }

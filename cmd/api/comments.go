@@ -39,12 +39,12 @@ func (app *application) createCommentHandler(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	if err := writeJSON(w, http.StatusCreated, comment); err != nil {
+	if err := app.jsonResponse(w, http.StatusCreated, comment); err != nil {
 		app.internalServerError(w, r, err)
 	}
 }
 
-func (app *application) getCommentsByPostID(w http.ResponseWriter, r *http.Request) {
+func (app *application) getCommentsByPostHandler(w http.ResponseWriter, r *http.Request) {
 	postID := r.PathValue("postID")
 
 	postIDInt, err := strconv.ParseInt(postID, 10, 64)
@@ -65,7 +65,7 @@ func (app *application) getCommentsByPostID(w http.ResponseWriter, r *http.Reque
 		}
 		return
 	}
-	if err := writeJSON(w, http.StatusOK, post); err != nil {
+	if err := app.jsonResponse(w, http.StatusOK, post); err != nil {
 		app.internalServerError(w, r, err)
 	}
 

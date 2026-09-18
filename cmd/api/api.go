@@ -35,8 +35,6 @@ func (app *application) mount() http.Handler {
 	r.Use(middleware.RequestID)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
-	r.Use(middleware.Timeout(60 * time.Second))
-	r.Use()
 
 	// Routes
 	r.Route("/v1", func(r chi.Router) {
@@ -44,10 +42,13 @@ func (app *application) mount() http.Handler {
 
 		//  Post Routes
 		r.Route("/posts", func(r chi.Router) {
+			r.Use(middleware.Timeout(5 * time.Second))
 			r.Post("/", app.createPostHandler)
-
 			r.Route("/{postID}", func(r chi.Router) {
+				r.Use(app.postContextMiddleware)
 				r.Get("/", app.getPostHandler)
+				r.Delete("/", app.deletePostHandler)
+				r.Patch("/", app.updatePostHandler)
 			})
 
 		})
@@ -56,9 +57,6 @@ func (app *application) mount() http.Handler {
 		r.Route("/comments", func(r chi.Router) {
 			r.Post("/", app.createCommentHandler)
 
-			r.Route("/{postID}", func(r chi.Router) {
-				r.Get("/", app.getCommentsByPostID)
-			})
 		})
 
 	})
